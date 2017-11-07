@@ -1,0 +1,10 @@
+a=float(raw_input("Enter first number:\n"))
+b=float(raw_input("Enter second number:\n"))
+
+print("a+b="+str(a+b))
+print("a-b="+str(a-b))
+print("a*b="+str(a*b))
+print("a/b="+str(a/b))
+print("a//b="+str(a//b))
+print("a%b="+str(a%b))
+print("a**b="+str(a**b))
