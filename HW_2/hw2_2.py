@@ -3,8 +3,8 @@ numb_became_str = str(numb)
 result=1
  
 for i in numb_became_str:
- f=int(i)
- result=result*f
+    f=int(i)
+    result=result*f
 print 'product of numbers is:' , result
 # reverse
 print 'reverse of numbers is:' , numb_became_str[::-1]
