@@ -1,0 +1,6 @@
+name = raw_input("What is your name?\n")
+age = raw_input ("How are you?\n")
+home = raw_input("Where do you live?\n")
+print("Hello\n", name)
+print("Your age is\n", age)
+print("You live in\n", home)

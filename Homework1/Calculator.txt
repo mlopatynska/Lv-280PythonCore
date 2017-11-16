@@ -1,0 +1,15 @@
+
+x= float(raw_input('first number\n'))
+y= float(raw_input('second number\n'))
+result = x + y
+print ('Sum = ', result)
+result = x - y
+print ('Difference = ', result)
+result = x * y
+print ('Multiplication =  ', result)
+if y == 0:
+  print ('Error')
+else:
+  result = x / y
+  print ('Division = ', result)
+
