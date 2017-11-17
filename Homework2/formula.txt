@@ -1,0 +1,9 @@
+from math import *
+x=input()
+y=input()
+z=int(input())
+c= (2*math.cos(x-Pi/6))/(0.5+ math.sin(y)**2)
+print(c)
+a=(1+(z**2)/(3+(z**2)/5)))
+print(a)
+

@@ -1,0 +1,12 @@
+a = "2187"
+b = int(a[0])
+c = int(a[1])
+d = int(a[2])
+f = int(a[3])
+print('The product of all digits =', b*c*d*f)
+g = list(a)
+g.reverse()
+w = "".join(g)
+print('The inverse number =', w)
+q = int("".join(sorted(a)))
+print('Sorted number =', q)
