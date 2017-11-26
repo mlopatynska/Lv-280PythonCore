@@ -11,5 +11,5 @@ while a > 0:
     else:
         odd +=1
     a=a//10
-    print(a)    
-print(even,odd)
+    print(a) 
+print("Even: %d , odd: %d" % (even, odd))
