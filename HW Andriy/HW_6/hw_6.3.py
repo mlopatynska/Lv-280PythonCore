@@ -7,7 +7,10 @@ def perestanovka(x, *y):
     for word_in_y in y:
         select_word = True
         for letters_2 in word_in_y:
-            select_word *= dictionary_1[letters_2] >= word_in_y.count(letters_2)
+            if any(letters_2 == i for i in dictionary_1.keys()):
+                select_word *= dictionary_1[letters_2] >= word_in_y.count(letters_2)
+            else:
+                select_word = False
         if select_word == True:
             selected_y.append(word_in_y)
         else:
@@ -17,4 +20,4 @@ def perestanovka(x, *y):
     .format(x, str(selected_y).replace("[", "").replace("]", ""), str(not_selected_y).replace("[", "").replace("]", ""))
 
 
-perestanovka("ababahalamaha", "baba", "bahama", "mama", "lama", "hahaha")
+perestanovka("ababahalamaha", "baba", "bahama", "mama", "lama", "hahaha", "papa")
