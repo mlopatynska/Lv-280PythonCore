@@ -10,7 +10,7 @@ def perestanovka(x, y):
   for item in y:
     for letter in item:
       if letter in x:
-        if item.index(letter)==item.rindex(item[len(item)-1]):
+        if item.rindex(letter)==item.rindex(item[len(item)-1]):
           print 'You can compose the word {} from letters in {}'.format(item,x)
         continue
     
