@@ -111,6 +111,11 @@ while True:
     score_text = font.render("Score: {}".format(score), True, WHITE)
     screen.blit(score_text, [0, 0])
 
+    hunger_text = font.render("HUNGER:", True, WHITE)
+    screen.blit(hunger_text, [0, 29])
+
+    pygame.draw.rect(screen, GREEN, [100, 30, 2*(50-score) if score <100 else 0, 20])
+
     if event.type == pygame.MOUSEBUTTONDOWN:
         if event.button == 1:
             click_sound.play()
