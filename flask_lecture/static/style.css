@@ -1,0 +1,14 @@
+body {
+    background-color:black;
+    font-color:white;
+}
+
+h1 {
+    color: blue;
+}
+
+li {
+    font-size:16px
+    font-color: green;
+    background-color:yellow
+}

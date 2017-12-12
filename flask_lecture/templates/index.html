@@ -1,0 +1,21 @@
+<!doctype html>
+<head>
+<title>My title</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+
+<body>
+<h1>On this page we have next chapters:</h1>
+<br>
+<ul>
+  <li><a href="{{ url_for('hello_world') }}" >index page</a></li>
+  <li><a href="{{ url_for('buy_world') }}" >Good buy page</a></li>
+  <li><a href="{{ url_for('show_user_profile',username = 'Vasia') }}" >User name page</a></li>
+  <li><a href="{{ url_for('hello', name='Maryana') }}" >Hello page</a></li>
+</ul>
+</body>
+
+
+
+
