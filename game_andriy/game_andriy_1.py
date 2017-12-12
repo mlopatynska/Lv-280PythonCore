@@ -1,11 +1,12 @@
 import pygame
+import random
 pygame.init()
 
 screen_x = 1280
 screen_y = 720
 screen = pygame.display.set_mode((screen_x, screen_y))
 
-pygame.display.set_caption('Bunny running')
+pygame.display.set_caption('Bunny running v3.0 beta')
 
 clock = pygame.time.Clock()
 
@@ -13,11 +14,15 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 RED = (255,0,0)
 GREEN = (0,255,0)
+DARKER_GREEN = (0,200,0)
 BLUE = (0,0,255)
 SKY = (0, 126, 255)
 YELLOW = (255,255,0)
+ORANGE = (255, 126, 0)
 
 font = pygame.font.SysFont('Calibri', 25, True, False)
+font_large = pygame.font.SysFont('Calibri', 72, True, False)
+
 
 image_pos_x = 400
 image_pos_y = 300
@@ -46,6 +51,8 @@ image_bunny_all_rect = image_bunny_1_rect.unionall([image_bunny_2_rect, image_bu
 
 image_bunny_all_rect[1] = screen_y - 170
 
+background_image = pygame.transform.scale(pygame.image.load("the-house-in-the-field.jpg"), (screen_x, screen_y))
+
 gif_number = 0
 bunny_x = 0
 bunny_y = screen_y - 170
@@ -61,10 +68,14 @@ image_carrot_rect = image_carrot.get_rect()
 carrot_positions = []
 
 for carrot_pos in range(screen_x / 6, screen_x*20, 120):
-    carrot_positions.append([carrot_pos, screen_y / 2])
+    carrot_positions.append([carrot_pos, random.randint(screen_y / 2, (screen_y / 2 + screen_y - 170)) / 2])
+    carrot_positions.append([carrot_pos, random.randint((screen_y / 2 + screen_y - 170) / 2, screen_y - 170)])
 
 score = 0
+score_full = 50
 click_sound = pygame.mixer.Sound("Ok.wav")
+time = []
+speed = 40
 
 # -------- Main Program Loop -----------
 while True:
@@ -72,6 +83,7 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
+            quit()
             print("User asked to quit.")
         elif event.type == pygame.KEYDOWN:
             print("User pressed a key.")
@@ -86,9 +98,11 @@ while True:
     # --- Game logic should go here
     # --- Drawing code should go here
 
-    screen.fill(SKY)
-    pygame.draw.rect(screen, GREEN, [0, screen_y - 100, screen_x, 200])
-    pygame.draw.circle(screen, YELLOW, [screen_x, 0], screen_x / 8)
+    # screen.fill(SKY)
+    # pygame.draw.rect(screen, GREEN, [0, screen_y - 100, screen_x, 200])
+    # pygame.draw.circle(screen, YELLOW, [screen_x, 0], screen_x / 8)
+
+    screen.blit(background_image, (0, 0))
 
     # for i in range(len(carrot_positions)):
     #     image_carrot_rect[0], image_carrot_rect[1] = carrot_positions.keys()[i][0], carrot_positions.keys()[i][1]
@@ -114,7 +128,34 @@ while True:
     hunger_text = font.render("HUNGER:", True, WHITE)
     screen.blit(hunger_text, [0, 29])
 
-    pygame.draw.rect(screen, GREEN, [100, 30, 2*(50-score) if score <100 else 0, 20])
+    if score < score_full*0.25:
+        progress_color = RED
+    elif score < score_full*0.5:
+        progress_color = ORANGE
+    elif score < score_full*0.75:
+        progress_color = YELLOW
+    elif score <= score_full:
+        progress_color = GREEN
+
+    if score >= score_full:
+        time.append(float(pygame.time.get_ticks()) / 1000)
+        time_text = font_large.render("Your time is {0:.2f} sec".format(time[0]), True, WHITE)
+        time_rect = time_text.get_rect()
+        time_rect[0], time_rect[1] = screen_x / 2 - time_rect[2] / 2, screen_y / 2 - time_rect[3] / 2
+        screen.blit(time_text, time_rect)
+        screen.blit(image_bunny_8, image_bunny_all_rect)
+        jump_or_fall = "fall"
+        gif_number = 997
+        if image_bunny_all_rect[1] < screen_y - 170:
+            image_bunny_all_rect[0] += int(speed/slow_coef)
+
+        continue_text = font_large.render("Continue", True, WHITE)
+        continue_rect = continue_text.get_rect()
+        continue_rect[0], continue_rect[1] = screen_x / 2 - continue_rect[2] / 2, time_rect.bottom
+        pygame.draw.rect(screen, DARKER_GREEN, continue_rect)
+        screen.blit(continue_text, continue_rect)
+
+    pygame.draw.rect(screen, progress_color, [100, 30, 200*float(score_full - score)/float(score_full) if score < score_full else 1, 20])
 
     if event.type == pygame.MOUSEBUTTONDOWN:
         if event.button == 1:
@@ -177,7 +218,7 @@ while True:
     elif gif_number in range(slow_coef*7, slow_coef*8):
         screen.blit(image_bunny_8, image_bunny_all_rect)
         gif_number += 1
-        if gif_number >= slow_coef*8:
+        if gif_number in range(slow_coef*8, slow_coef*9+1):
             gif_number = 0
 
 
@@ -186,13 +227,13 @@ while True:
         image_bunny_all_rect[0] = -200
         for carrot_pos in carrot_positions:
             carrot_pos[0] -= screen_x +100
-    elif gif_number in range(0, 999, slow_coef):
-        image_bunny_all_rect[0] += 40
+    elif gif_number in range(0, 1000, slow_coef):
+        image_bunny_all_rect[0] += speed
 
     # Bunny jumping
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_SPACE and jump_or_fall == "jump":
-            image_bunny_all_rect[1] -= 10
+            image_bunny_all_rect[1] -= 20
             if image_bunny_all_rect[1] <= screen_y/2-170:
                 image_bunny_all_rect[1] = screen_y/2-170
                 jump_or_fall = "fall"
