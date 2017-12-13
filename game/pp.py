@@ -9,9 +9,8 @@ display_height = 600
 
 black = (0, 0, 0)
 white = (255, 255, 255)
-red = (255, 0, 0)
-green= (0,255,0)
-car_width = 73
+
+snowmn_width = 80
 
 background_image = pygame.image.load("winter.jpeg")
 gameDisplay = pygame.display.set_mode((display_width, display_height))
@@ -25,7 +24,7 @@ def things(thingx, thingy, thingw, thingh, color):
     pygame.draw.circle(gameDisplay, color, [thingx, thingy], thingw, thingh)
 
 
-def car(x, y):
+def man(x, y):
     gameDisplay.blit(snowmanImg, (x, y))
 
 
@@ -59,7 +58,7 @@ def game_loop():
 
     thing_startx = random.randrange(0, display_width)
     thing_starty = -600
-    thing_speed = 20
+    thing_speed = 30
     thing_width = 15
     thing_height = 15
 
@@ -83,28 +82,26 @@ def game_loop():
                     x_change = 0
 
         x += x_change
-        #gameDisplay.fill(green)
+       
         gameDisplay.blit(background_image,[0,0])
-        # things(thingx, thingy, thingw, thingh, color)
+ 
         things(thing_startx, thing_starty, thing_width, thing_height, white)
         thing_starty += thing_speed
-        car(x, y)
+        man(x, y)
 
-        if x > display_width - car_width or x < 0:
+        if x > display_width - snowmn_width or x < 0:
             crash()
 
         if thing_starty > display_height:
             thing_starty = 0 - thing_height
             thing_startx = random.randrange(0, display_width)
-
-        ####
+        
         if y < thing_starty + thing_height:
             print('y crossover')
 
-            if x > thing_startx and x < thing_startx + thing_width or x + car_width > thing_startx and x + car_width < thing_startx + thing_width:
+            if x > thing_startx and x < thing_startx + thing_width or x + snowmn_width > thing_startx and x + snowmn_width < thing_startx + thing_width:
                 print('x crossover')
                 crash()
-        ####
 
         pygame.display.update()
         clock.tick(60)
