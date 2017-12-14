@@ -14,11 +14,11 @@ snowmn_width = 80
 
 background_image = pygame.image.load("winter.jpeg")
 gameDisplay = pygame.display.set_mode((display_width, display_height))
-pygame.display.set_caption('snowman')
+pygame.display.set_caption('snowman vs santaClaus')
 clock = pygame.time.Clock()
 
 snowmanImg = pygame.image.load('snowman.png')
-
+santa_sound = pygame.mixer.Sound("hoho.wav")
 
 def things(thingx, thingy, thingw, thingh, color):
     pygame.draw.circle(gameDisplay, color, [thingx, thingy], thingw, thingh)
@@ -29,7 +29,7 @@ def man(x, y):
 
 
 def text_objects(text, font):
-    textSurface = font.render(text, True, black)
+    textSurface = font.render(text, True, white)
     return textSurface, textSurface.get_rect()
 
 
@@ -48,7 +48,7 @@ def message_display(text):
 
 def crash():
     message_display("HappyNewYear!")
-
+    santa_sound.play()
 
 def game_loop():
     x = (display_width * 0.45)
@@ -58,7 +58,7 @@ def game_loop():
 
     thing_startx = random.randrange(0, display_width)
     thing_starty = -600
-    thing_speed = 30
+    thing_speed = 20
     thing_width = 15
     thing_height = 15
 
@@ -101,6 +101,7 @@ def game_loop():
 
             if x > thing_startx and x < thing_startx + thing_width or x + snowmn_width > thing_startx and x + snowmn_width < thing_startx + thing_width:
                 print('x crossover')
+                santa_sound.play()
                 crash()
 
         pygame.display.update()
