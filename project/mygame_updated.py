@@ -12,21 +12,38 @@ blue =  (  0,   0, 255)
 red = (255, 0, 0)
 brown = (255,248,220)
 
+
+
 Display = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption('Project game')
 #pygame.mouse.set_visible(False) # here we make mouse pointer invisible
 
+#text variables
+font = pygame.font.Font(None, 25)
+score = 0
+text = font.render("You hit the alien {} times!". format(score),True,green)
+
+
 # images
 back_image = pygame.image.load("mt-sample-background.jpg").convert() #must go after setting display mode!
 player_image = pygame.image.load("spaceship-icon.png").convert()
-alien = pygame.image.load("clipart-alien-ffce.png").convert()
+alien_image= pygame.image.load("clipart-alien-ffce.png").convert()
 player_image.set_colorkey(white) # makes white colour transparent
-alien.set_colorkey(black)
+alien_image.set_colorkey(black)
 
 # sounds
 click_sound = pygame.mixer.Sound("laser1.ogg")
 pygame.mixer.music.load("01_brad_fiedel_theme_from_the_terminator_myzuka.mp3")
 pygame.mixer.music.play()
+hit_sound = pygame.mixer.Sound("phaserUp1.ogg")
+
+# global variable to start shooting
+fire = True
+# global variable for coordinate updating
+x_coord = 0
+y_coord = 0
+# global variable with aliens
+aliens = []
 
 class Spaceship(object):
     def __init__(self):
@@ -37,7 +54,7 @@ class Spaceship(object):
         self.x_coord = 10
         self.y_coord = 350
         # initial position of muzzle
-        self.xmuzzle = self.x_coord + 122 # координати дула лазера
+        self.xmuzzle = self.x_coord + 122  # координати дула лазера
         self.ymuzzle = self.y_coord + 61
     def move(self):
         if event.type == pygame.KEYDOWN:  # when we press the key
@@ -66,58 +83,90 @@ class Spaceship(object):
             self.y_coord = 596
     def blit(self):
         Display.blit(player_image, [self.x_coord, self.y_coord])
+        global x_coord # here we override the global variable x_coord to make sure its value is updated
+        x_coord = self.x_coord
+        global y_coord # here we override the global variable y_coord
+        y_coord = self.y_coord
     def shoot(self):
+        # position of muzzle is updated when x_coord and y_coord are overriden
+        self.xmuzzle = x_coord + 122  # координати дула лазера
+        self.ymuzzle = y_coord + 61
         if event.type == pygame.KEYDOWN:  # when we press the key
             if event.key == pygame.K_SPACE:
                 click_sound.play()  # shooting sound
-                pygame.draw.rect(Display, purple, [self.xmuzzle, self.ymuzzle, 50, 5])  # laser
-        self.xmuzzle = self.x_coord + 122 # here we override the initial positions to make sure it's changed with
-        # spaceship movements
-        self.ymuzzle = self.y_coord + 61
+                # print "x_coord", x_coord
+                # print "y_coord", y_coord
 
 class Laser(Spaceship):
     def __init__(self):
-        super(Laser, self).__init__() #here we initialize both attributes of parent class and child class
+        super(Laser, self).__init__()
         self.las_speed = 10
     def blit(self):
-        if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-            print self.xmuzzle
-            if self.xmuzzle <= 1200:  # if laser beam reaches the end of screen - it must stop!
-                pygame.draw.rect(Display, purple, [self.xmuzzle, self.ymuzzle, 50, 5])  # laser
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            global fire
+            fire = False
+            self.xmuzzle = x_coord + 122 # here we override the coordinates of muzzle according to new position
+            self.ymuzzle = y_coord + 61  # of the spaceship, to avoid getting old position from inherited variables
     def move(self):
-        # limit of laser movements
+        global fire
+        if fire == False:
+            # limit of laser movements
+            pygame.draw.rect(Display, purple, [self.xmuzzle, self.ymuzzle, 50, 5])  # laser
             self.xmuzzle = self.xmuzzle + self.las_speed
+        if self.xmuzzle > 1192:
+            global fire
+            fire = True
+            self.xmuzzle = x_coord + 122
+            self.ymuzzle = y_coord + 61
+    def hit(self):
+        print 'laser', self.xmuzzle, self.ymuzzle
+        for nl in range(len(aliens)):
+            if self.xmuzzle + 50 >= aliens[nl][0]:
+                if aliens[nl][1] in range(self.ymuzzle, self.ymuzzle + 128):
+                    hit_sound.play()
+                    Display.blit(text, [10, 10])
+                    global score
+                    score = score + 1
 
-
-
-
-
-
+class Aliens(Laser):
+    def __init__(self):
+        super(Aliens, self).__init__()
+        # Initial position
+        self.alienx_coord = 1200
+        # Speed in pixels per frame
+        self.alienx_speed = -3
+    def create(self):
+        global aliens
+        if len(aliens) < 1:
+            # self.alienx_coord + random.randrange(1,250,128) prevents aliens from appearing in one column
+            aliens = [[self.alienx_coord + random.randrange(1,250,128), random.randrange(0, 570, 128)] for nl in range(5)]  # nested list comprehension!
+    def blit(self,aliens):
+        # aliens' movements and appearing
+        for nl in range(len(aliens)):
+            Display.blit(alien_image, aliens[nl])
+            aliens[nl][0] = aliens[nl][0] + self.alienx_speed
+            print 'al', aliens[nl][0], aliens[nl][1]
+            print "---------"
+            if aliens[nl][0] < 0:
+                aliens[nl][0] = self.alienx_coord
+                aliens[nl][1] = random.randrange(0, 570, 128)
+                Display.blit(alien_image, [aliens[nl][0], aliens[nl][1]])
 
 
 
 spaceship = Spaceship() # instatiation
 laser = Laser()
+alien = Aliens()
 
-#alien movement
-# Initial position
-alienx_coord = 1200
 
-aliens = [[alienx_coord, random.randrange(0, 570, 128)] for nl in range(5)] # nested list comprehension!
-# print aliens
-# Speed in pixels per frame
-alienx_speed = -3
 
 done = False
 clock = pygame.time.Clock()
-
 
 # main game loop
 while done == False:
 
     Display.blit(back_image, [0, 0])
-
-
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -128,15 +177,11 @@ while done == False:
     spaceship.shoot()
     laser.blit()
     laser.move()
+    laser.hit()
+    alien.create()
+    alien.blit(aliens)
 
-    # aliens' movements and appearing
-    for nl in range(len(aliens)):
-        Display.blit(alien, aliens[nl])
-        aliens[nl][0] = aliens[nl][0] + alienx_speed
-        if aliens[nl][0] < 0:
-            aliens[nl][0] = alienx_coord
-            aliens[nl][1] = random.randrange(0,570, 128)
-            Display.blit(alien, [aliens[nl][0], aliens[nl][1]])
+
 
 
     pygame.display.flip()  # updates full display
