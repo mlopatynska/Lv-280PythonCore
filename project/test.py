@@ -49,6 +49,8 @@ y_coord = 0
 aliens = []
 #variable to stop laser sound
 target_hit = False
+# variable to make an alien stop and eat spaceship
+eat = False
 
 class Spaceship(object):
     def __init__(self):
@@ -125,13 +127,14 @@ class Laser(Spaceship):
     def hit(self):
         for alien_ in range(len(aliens)):
             if target_hit == False:
-                # print 'start', self.xmuzzle
+                # print ('start', self.xmuzzle)
                 if self.xmuzzle + 50 >= aliens[alien_][0] and self.xmuzzle < 1192: # checking if laser hit an alien, i.e.
                 # if x coordinates of laser reached the x coordinates of any alien
-                    # print "!!!"
                     if self.ymuzzle in range(aliens[alien_][1], aliens[alien_][1] + 129): # cheking if y coordinates of
                         # a laser are the same as y coordinates of an alien + its height (128 pixels)
                         hit_sound.play()
+                        print (aliens)
+                        print ('we shot alien', alien_)
                         global score
                         score = score + 1 # adding scores when an alien is hit
                         global target_hit
@@ -139,7 +142,7 @@ class Laser(Spaceship):
                         global fire
                         fire = True # here we stop drawing laser once it hits the alien
             if target_hit == True:
-                # print "current x_muzzle!", self.xmuzzle
+                print ('end', self.xmuzzle)
                 if self.xmuzzle >= 1192: # if the laser beam reached the end of
                     # print self.xmuzzle, "final"
                     target_hit = False
@@ -160,7 +163,8 @@ class Aliens(Laser):
         # aliens' movements and appearing
         for nl in range(len(aliens)):
             Display.blit(alien_image, aliens[nl])
-            aliens[nl][0] = aliens[nl][0] + self.alienx_speed
+            if eat == False:
+                aliens[nl][0] = aliens[nl][0] + self.alienx_speed
             if aliens[nl][0] < 0:
                 aliens[nl][0] = self.alienx_coord
                 aliens[nl][1] = random.randrange(0, 570, 128)
@@ -169,15 +173,14 @@ class Aliens(Laser):
         # print aliens, "!!!!!!!!!!!!!!!!!!!!!!!!"
         for al in range(len(aliens)):
             # print aliens[al][0]
-            if aliens[al][0] <= self.x_coord + 128:
-                print aliens[al][0]
-                print self.x_coord
-                print "!!!!!!!!!!!!!!!!!!!!!!!!"
-                bite_sound.play()
-
-
-
-
+            global eat
+            if aliens[al][0] <= x_coord + 128 and eat == False: # if an alien reaches the x_coord of she spaceship +its length (128)
+                    if aliens [al][1] in range(y_coord+129) and y_coord in range(aliens [al][1],aliens [al][1]+129):
+                        # print (aliens[al][0])
+                        # print (x_coord)
+                        # print ("!!!!!!!!!!!!!!!!!!!!!!!!")
+                        bite_sound.play()
+                        eat = True
 
 
 spaceship = Spaceship() # instatiation
@@ -213,9 +216,9 @@ while done == False:
     alien.create()
     alien.blit(aliens)
     alien.bite(aliens)
-
-
-
+    if eat ==True: # alien caught the ship, game over!
+        text_eaten = font.render("You lost! Alien ate your ship!", True, red)
+        Display.blit(text_eaten, [500, 350])
 
     pygame.display.flip()  # updates full display
     clock.tick(30)

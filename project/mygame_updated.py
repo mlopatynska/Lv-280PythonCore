@@ -30,14 +30,15 @@ font = pygame.font.Font(None, 25)
 back_image = pygame.image.load("mt-sample-background.jpg").convert() #must go after setting display mode!
 player_image = pygame.image.load("spaceship-icon.png").convert()
 alien_image= pygame.image.load("clipart-alien-ffce.png").convert()
-player_image.set_colorkey(white) # makes white colour transparent
-alien_image.set_colorkey(black)
+# player_image.set_colorkey(white) # makes white colour transparent
+# alien_image.set_colorkey(black)
 
 # sounds
 click_sound = pygame.mixer.Sound("laser1.ogg")
 pygame.mixer.music.load("01_brad_fiedel_theme_from_the_terminator_myzuka.mp3")
 pygame.mixer.music.play()
 hit_sound = pygame.mixer.Sound("phaserUp1.ogg")
+bite_sound = pygame.mixer.Sound("zap2.ogg")
 
 # global variable to start shooting
 fire = True
@@ -48,6 +49,8 @@ y_coord = 0
 aliens = []
 #variable to stop laser sound
 target_hit = False
+# variable to make an alien stop and eat spaceship
+eat = False
 
 class Spaceship(object):
     def __init__(self):
@@ -98,8 +101,6 @@ class Spaceship(object):
         if event.type == pygame.KEYDOWN:  # when we press the key
             if event.key == pygame.K_SPACE:
                 click_sound.play()  # shooting sound
-                # print "x_coord", x_coord
-                # print "y_coord", y_coord
 
 class Laser(Spaceship):
     def __init__(self):
@@ -118,7 +119,7 @@ class Laser(Spaceship):
             pygame.draw.rect(Display, purple, [self.xmuzzle, self.ymuzzle, 50, 5])  # laser
             self.xmuzzle = self.xmuzzle + self.las_speed
         if self.xmuzzle > 1192:
-            print '--', self.xmuzzle
+            # print '--', self.xmuzzle
             global fire
             fire = True
             self.xmuzzle = x_coord + 122
@@ -126,10 +127,10 @@ class Laser(Spaceship):
     def hit(self):
         for alien_ in range(len(aliens)):
             if target_hit == False:
-                print 'start', self.xmuzzle
+                # print 'start', self.xmuzzle
                 if self.xmuzzle + 50 >= aliens[alien_][0] and self.xmuzzle < 1192: # checking if laser hit an alien, i.e.
                 # if x coordinates of laser reached the x coordinates of any alien
-                    print "!!!"
+                    # print "!!!"
                     if self.ymuzzle in range(aliens[alien_][1], aliens[alien_][1] + 129): # cheking if y coordinates of
                         # a laser are the same as y coordinates of an alien + its height (128 pixels)
                         hit_sound.play()
@@ -140,9 +141,9 @@ class Laser(Spaceship):
                         global fire
                         fire = True # here we stop drawing laser once it hits the alien
             if target_hit == True:
-                print "current x_muzzle!", self.xmuzzle
+                # print "current x_muzzle!", self.xmuzzle
                 if self.xmuzzle >= 1192: # if the laser beam reached the end of
-                    print self.xmuzzle, "final"
+                    # print self.xmuzzle, "final"
                     target_hit = False
 
 class Aliens(Laser):
@@ -161,14 +162,24 @@ class Aliens(Laser):
         # aliens' movements and appearing
         for nl in range(len(aliens)):
             Display.blit(alien_image, aliens[nl])
-            aliens[nl][0] = aliens[nl][0] + self.alienx_speed
-            # print 'al', aliens[nl][0], aliens[nl][1]
-            # print "---------"
+            if eat == False:
+                aliens[nl][0] = aliens[nl][0] + self.alienx_speed
             if aliens[nl][0] < 0:
                 aliens[nl][0] = self.alienx_coord
                 aliens[nl][1] = random.randrange(0, 570, 128)
                 Display.blit(alien_image, [aliens[nl][0], aliens[nl][1]])
-
+    def bite(self, aliens):
+        # print aliens, "!!!!!!!!!!!!!!!!!!!!!!!!"
+        for al in range(len(aliens)):
+            # print aliens[al][0]
+            global eat
+            if aliens[al][0] <= x_coord + 128 and eat == False: # if an alien reaches the x_coord of she spaceship +its length (128)
+                    if aliens [al][1] in range(y_coord+129) and y_coord in range(aliens [al][1],aliens [al][1]+129):
+                        # print (aliens[al][0])
+                        # print (x_coord)
+                        # print ("!!!!!!!!!!!!!!!!!!!!!!!!")
+                        bite_sound.play()
+                        eat = True
 
 
 spaceship = Spaceship() # instatiation
@@ -203,9 +214,10 @@ while done == False:
     Display.blit(text, [10, 10])
     alien.create()
     alien.blit(aliens)
-
-
-
+    alien.bite(aliens)
+    if eat ==True: # alien caught the ship, game over!
+        text_eaten = font.render("You lost! Alien ate your ship!", True, red)
+        Display.blit(text_eaten, [500, 350])
 
     pygame.display.flip()  # updates full display
     clock.tick(30)
