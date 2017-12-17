@@ -1,0 +1,27 @@
+x=raw_input('Please enter word which will be compared to other words\n')
+listy=[]
+print ('Please enter 5 other words which will be compared to x\n')
+#print (len(list))
+while len(listy)<5:
+  y=raw_input()
+  listy.append(y)
+print (listy)
+def perestanovka(x, y):
+  for item in y:
+    print item
+    modif_i=list(item)
+    modif_i.sort()
+    newi=''.join(modif_i)
+    for letter in newi:
+      if letter in x:
+        #print newi.rindex(letter)
+        #print len(newi)-1
+        if newi.rindex(letter)==len(newi)-1:
+          print 'You can compose the word {} from letters in {}'.format(item,x)
+          break
+        else:
+          continue
+      else:
+        break
+    
+perestanovka(x,listy)

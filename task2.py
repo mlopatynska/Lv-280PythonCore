@@ -1,0 +1,6 @@
+num1=input("Please type any number.\n")
+num2=input("And one more number, please\n")
+print (str(num1) + "+" + str(num2) + "=" + str(num1+num2))
+print (str(num1) + "-" + str(num2) + "=" + str(num1-num2))
+print (str(num1) + "*" + str(num2) + "=" + str(num1*num2))
+print (str(num1) + "/" + str(num2) + "=" + str(num1/num2))
