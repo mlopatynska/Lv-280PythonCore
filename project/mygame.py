@@ -1,4 +1,3 @@
-# This Python file uses the following encoding: utf-8
 import pygame, random
 
 pygame.init()
@@ -11,8 +10,6 @@ white = (255, 255, 255)
 blue =  (  0,   0, 255)
 red = (255, 0, 0)
 brown = (255,248,220)
-
-flag = False
 
 Display = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption('Project game')
@@ -30,17 +27,12 @@ click_sound = pygame.mixer.Sound("laser1.ogg")
 pygame.mixer.music.load("01_brad_fiedel_theme_from_the_terminator_myzuka.mp3")
 pygame.mixer.music.play()
 
-class Spaceship(object):
+'''class Spaceship():
     def __init__(self):
-        # Speed in pixels per frame
         self.x_speed = 0
         self.y_speed = 0
-        # Initial position
         self.x_coord = 10
         self.y_coord = 350
-        # initial position of muzzle
-        self.xmuzzle = self.x_coord + 122 # координати дула лазера
-        self.ymuzzle = self.y_coord + 61
     def move(self):
         if event.type == pygame.KEYDOWN:  # when we press the key
             if event.key == pygame.K_LEFT: # pressing left arrow key
@@ -67,47 +59,27 @@ class Spaceship(object):
         elif self.y_coord >= 596:
             self.y_coord = 596
     def blit(self):
-        Display.blit(player_image, [self.x_coord, self.y_coord])
-    def shoot(self,flag_shoot):
-        if flag_shoot:
-                click_sound.play()  # shooting sound
-                pygame.draw.rect(Display, purple, [self.xmuzzle, self.ymuzzle, 50, 5])
-        self.xmuzzle = self.x_coord + 122 # here we override the initial positions to make sure it's changed with
-        # spaceship movements
-        self.ymuzzle = self.y_coord + 61
-
-class Laser(Spaceship):
-    def __init__(self):
-        super(Laser, self).__init__() #here we initialize both attributes of parent class and child class
-        self.las_speed = 10
-    def blit(self):
-        if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-            print self.xmuzzle
-            if self.xmuzzle <= 1200:  # if laser beam reaches the end of screen - it must stop!
-                pygame.draw.rect(Display, purple, [self.xmuzzle, self.ymuzzle, 50, 5])  # laser
-                laser.move()
-            else:
-                 self.xmuzzle = sp_x + 122
-                 self.ymuzzle = sp_y + 61
-                 # stop drawing of laser
-
-    def move(self):
-        # limit of laser movements
-        self.xmuzzle = self.xmuzzle + self.las_speed
-        
-    def stop(self):
-        pass
+        Display.blit(player_image, [self.x_coord, self.y_coord])'''
 
 
 
-spaceship = Spaceship() # instatiation
-laser = Laser()
+# spaceship movement
+# Speed in pixels per frame
+x_speed = 0
+y_speed = 0
+# Initial position
+x_coord = 10
+y_coord = 350
+#spaceship laser
+las_xcoord = x_coord+128
+las_ycoord = y_coord+64
+laser = 5
 
 #alien movement
 # Initial position
 alienx_coord = 1200
 
-aliens = [[alienx_coord + random.randrange(1,250), random.randrange(0, 570, 128)] for nl in range(random.randrange(1,5))] # nested list comprehension!
+aliens = [[alienx_coord, random.randrange(0, 570, 128)] for nl in range(5)] # nested list comprehension!
 print aliens
 # Speed in pixels per frame
 alienx_speed = -3
@@ -121,21 +93,51 @@ while done == False:
 
     Display.blit(back_image, [0, 0])
 
+
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-        if event.type == pygame.KEYDOWN:  # when we press the key
-            if event.key == pygame.K_SPACE:
-                flag = not flag
+        elif event.type == pygame.KEYDOWN: #when we press the key
+            if event.key == pygame.K_LEFT: #pressing left arrow key
+                x_speed = -3
+            elif event.key == pygame.K_RIGHT:
+                x_speed = 3
+            elif event.key == pygame.K_UP:
+                y_speed = -3
+            elif event.key == pygame.K_DOWN:
+                y_speed = 3
+            elif event.key == pygame.K_SPACE:
+                click_sound.play() # shooting sound
+                pygame.draw.rect(Display, purple, [x_coord+128, y_coord+64, 5, 2] ) #laser
+        elif event.type == pygame.KEYUP: #when we let key go
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                x_speed = 0
+            elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                y_speed = 0
+    if event.type == pygame.KEYUP and event.key == pygame.K_SPACE and las_xcoord < 1100:
+            print las_xcoord
+            print x_coord
+            pygame.draw.rect(Display, purple, [las_xcoord, las_ycoord, 5, 2])
+            las_xcoord = las_xcoord + laser
+    else:
+            las_xcoord = x_coord
 
 
-    spaceship.blit()
-    spaceship.move()
-    spaceship.shoot(flag)
-    sp_x = spaceship.x_coord
-    sp_y = spaceship.y_coord
-    laser.blit()
-    #laser.move()
+
+    # Move the object according to the speed vector.
+    x_coord += x_speed
+    y_coord += y_speed
+    # limit the movement of object
+    if x_coord < -2:
+        x_coord = -2
+    elif y_coord <= -19:
+        y_coord = -19
+    elif y_coord >= 596:
+        y_coord = 596
+
+
+    Display.blit(player_image, [x_coord, y_coord])
 
     # aliens' movements and appearing
     for nl in range(len(aliens)):
@@ -149,4 +151,4 @@ while done == False:
 
     pygame.display.flip()  # updates full display
     clock.tick(30)
-#pygame.quit()  # ends the game when loop is over
+pygame.quit()  # ends the game when loop is over

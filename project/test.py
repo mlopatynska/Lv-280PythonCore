@@ -38,6 +38,7 @@ click_sound = pygame.mixer.Sound("laser1.ogg")
 pygame.mixer.music.load("01_brad_fiedel_theme_from_the_terminator_myzuka.mp3")
 pygame.mixer.music.play()
 hit_sound = pygame.mixer.Sound("phaserUp1.ogg")
+bite_sound = pygame.mixer.Sound("zap2.ogg")
 
 # global variable to start shooting
 fire = True
@@ -98,8 +99,6 @@ class Spaceship(object):
         if event.type == pygame.KEYDOWN:  # when we press the key
             if event.key == pygame.K_SPACE:
                 click_sound.play()  # shooting sound
-                # print "x_coord", x_coord
-                # print "y_coord", y_coord
 
 class Laser(Spaceship):
     def __init__(self):
@@ -118,7 +117,7 @@ class Laser(Spaceship):
             pygame.draw.rect(Display, purple, [self.xmuzzle, self.ymuzzle, 50, 5])  # laser
             self.xmuzzle = self.xmuzzle + self.las_speed
         if self.xmuzzle > 1192:
-            print '--', self.xmuzzle
+            # print '--', self.xmuzzle
             global fire
             fire = True
             self.xmuzzle = x_coord + 122
@@ -126,10 +125,10 @@ class Laser(Spaceship):
     def hit(self):
         for alien_ in range(len(aliens)):
             if target_hit == False:
-                print 'start', self.xmuzzle
+                # print 'start', self.xmuzzle
                 if self.xmuzzle + 50 >= aliens[alien_][0] and self.xmuzzle < 1192: # checking if laser hit an alien, i.e.
                 # if x coordinates of laser reached the x coordinates of any alien
-                    print "!!!"
+                    # print "!!!"
                     if self.ymuzzle in range(aliens[alien_][1], aliens[alien_][1] + 129): # cheking if y coordinates of
                         # a laser are the same as y coordinates of an alien + its height (128 pixels)
                         hit_sound.play()
@@ -140,9 +139,9 @@ class Laser(Spaceship):
                         global fire
                         fire = True # here we stop drawing laser once it hits the alien
             if target_hit == True:
-                print "current x_muzzle!", self.xmuzzle
+                # print "current x_muzzle!", self.xmuzzle
                 if self.xmuzzle >= 1192: # if the laser beam reached the end of
-                    print self.xmuzzle, "final"
+                    # print self.xmuzzle, "final"
                     target_hit = False
 
 class Aliens(Laser):
@@ -162,12 +161,22 @@ class Aliens(Laser):
         for nl in range(len(aliens)):
             Display.blit(alien_image, aliens[nl])
             aliens[nl][0] = aliens[nl][0] + self.alienx_speed
-            # print 'al', aliens[nl][0], aliens[nl][1]
-            # print "---------"
             if aliens[nl][0] < 0:
                 aliens[nl][0] = self.alienx_coord
                 aliens[nl][1] = random.randrange(0, 570, 128)
                 Display.blit(alien_image, [aliens[nl][0], aliens[nl][1]])
+    def bite(self, aliens):
+        # print aliens, "!!!!!!!!!!!!!!!!!!!!!!!!"
+        for al in range(len(aliens)):
+            # print aliens[al][0]
+            if aliens[al][0] <= self.x_coord + 128:
+                print aliens[al][0]
+                print self.x_coord
+                print "!!!!!!!!!!!!!!!!!!!!!!!!"
+                bite_sound.play()
+
+
+
 
 
 
@@ -203,6 +212,7 @@ while done == False:
     Display.blit(text, [10, 10])
     alien.create()
     alien.blit(aliens)
+    alien.bite(aliens)
 
 
 
