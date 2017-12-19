@@ -23,20 +23,26 @@ score = 0
 
 #text variables
 font = pygame.font.Font(None, 25)
-
+font_lost = pygame.font.Font(None, 50)
+font_restart = pygame.font.Font(None, 50)
 
 
 # images
 back_image = pygame.image.load("mt-sample-background.jpg").convert() #must go after setting display mode!
 player_image = pygame.image.load("spaceship-icon.png").convert()
 alien_image= pygame.image.load("clipart-alien-ffce.png").convert()
+lost_image = pygame.image.load("C-RjIBLXsAUjeVc.jpg").convert()
 player_image.set_colorkey(white) # makes white colour transparent
 alien_image.set_colorkey(black)
 
 # sounds
 click_sound = pygame.mixer.Sound("laser1.ogg")
-pygame.mixer.music.load("01_brad_fiedel_theme_from_the_terminator_myzuka.mp3")
-pygame.mixer.music.play()
+gameover = False
+if gameover == False:
+    pygame.mixer.music.load("01_brad_fiedel_theme_from_the_terminator_myzuka.mp3")
+    pygame.mixer.music.play()
+if gameover == True:
+    pygame.mixer.music.stop()
 hit_sound = pygame.mixer.Sound("phaserUp1.ogg")
 bite_sound = pygame.mixer.Sound("zap2.ogg")
 
@@ -51,6 +57,7 @@ aliens = []
 target_hit = False
 # variable to make an alien stop and eat spaceship
 eat = False
+
 
 class Spaceship(object):
     def __init__(self):
@@ -96,8 +103,8 @@ class Spaceship(object):
         y_coord = self.y_coord
     def shoot(self):
         # position of muzzle is updated when x_coord and y_coord are overriden
-        self.xmuzzle = x_coord + 122  # координати дула лазера
-        self.ymuzzle = y_coord + 61
+        # self.xmuzzle = x_coord + 122  # координати дула лазера
+        # self.ymuzzle = y_coord + 61
         if event.type == pygame.KEYDOWN:  # when we press the key
             if event.key == pygame.K_SPACE:
                 click_sound.play()  # shooting sound
@@ -107,46 +114,56 @@ class Laser(Spaceship):
         super(Laser, self).__init__()
         self.las_speed = 10
     def blit(self):
+        print "на вході ", self.xmuzzle, self.ymuzzle
+        global fire
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            global fire
+            print "на вході KEYDOWN ", self.xmuzzle, self.ymuzzle
             fire = False
             self.xmuzzle = x_coord + 122 # here we override the coordinates of muzzle according to new position
             self.ymuzzle = y_coord + 61  # of the spaceship, to avoid getting old position from inherited variables
     def move(self):
-        global fire
-        if fire == False:
+        global fire # global statement should be used only once in a same function!!! After that global variable can bse used
+        #without it!
+        if fire == True and self.xmuzzle < 1192:
+            self.xmuzzle = self.xmuzzle + self.las_speed
+        if fire == False and self.xmuzzle < 1192:
             # limit of laser movements
             pygame.draw.rect(Display, purple, [self.xmuzzle, self.ymuzzle, 50, 5])  # laser
             self.xmuzzle = self.xmuzzle + self.las_speed
-        if self.xmuzzle > 1192:
-            # print '--', self.xmuzzle
-            global fire
-            fire = True
-            self.xmuzzle = x_coord + 122
-            self.ymuzzle = y_coord + 61
+            # print '--', self.xmuzzle+
+
     def hit(self):
-        for alien_ in range(len(aliens)):
-            if target_hit == False:
-                # print ('start', self.xmuzzle)
+        global target_hit
+        global fire
+        if target_hit == False:
+            for alien_ in range(len(aliens)):
+                print ("self.xmuzzle", self.xmuzzle)
                 if self.xmuzzle + 50 >= aliens[alien_][0] and self.xmuzzle < 1192: # checking if laser hit an alien, i.e.
                 # if x coordinates of laser reached the x coordinates of any alien
                     if self.ymuzzle in range(aliens[alien_][1], aliens[alien_][1] + 129): # cheking if y coordinates of
                         # a laser are the same as y coordinates of an alien + its height (128 pixels)
+                        print ('passed!')
+                        # print ('aliens[alien_][0]', aliens[alien_][0])
+                        # print ('aliens[alien_][1]', aliens[alien_][1])
                         hit_sound.play()
-                        print (aliens)
-                        print ('we shot alien', alien_)
+                        # print (aliens)
+                        # print ('we shot alien', alien_)
                         global score
                         score = score + 1 # adding scores when an alien is hit
-                        global target_hit
+                        # print ('dead', dead_alien)
+                        # aliens.remove(aliens[alien_]) # if an alien is shot it disappears
                         target_hit = True # variable to stop playing sound of hit after one time
-                        global fire
                         fire = True # here we stop drawing laser once it hits the alien
-            if target_hit == True:
-                print ('end', self.xmuzzle)
-                if self.xmuzzle >= 1192: # if the laser beam reached the end of
-                    # print self.xmuzzle, "final"
-                    target_hit = False
-
+        if target_hit == True:
+            print ('self.xmuzzle222:', self.xmuzzle)
+            if self.xmuzzle >= 1192: # if the laser beam reached the end of
+                # print ('self.xmuzzle >= 1192', self.xmuzzle)
+                # print self.xmuzzle, "final"
+                target_hit = False
+                print "target_hit = False"
+                # self.xmuzzle = x_coord + 122 # if laser reached the end of screen ve reset its value according to
+                # position of the ship
+                # self.ymuzzle = y_coord + 61
 class Aliens(Laser):
     def __init__(self):
         super(Aliens, self).__init__()
@@ -170,12 +187,15 @@ class Aliens(Laser):
                 aliens[nl][1] = random.randrange(0, 570, 128)
                 Display.blit(alien_image, [aliens[nl][0], aliens[nl][1]])
     def bite(self, aliens):
+        global eat
         # print aliens, "!!!!!!!!!!!!!!!!!!!!!!!!"
         for al in range(len(aliens)):
             # print aliens[al][0]
-            global eat
-            if aliens[al][0] <= x_coord + 128 and eat == False: # if an alien reaches the x_coord of she spaceship +its length (128)
-                    if aliens [al][1] in range(y_coord+129) and y_coord in range(aliens [al][1],aliens [al][1]+129):
+            if aliens[al][0] - 10 <= x_coord + 125 and eat == False: # if an alien reaches the x_coord of she spaceship +its length (128)
+                    if aliens [al][1] - 9 in range(y_coord+120) and y_coord - 9 in range(aliens [al][1],aliens [al][1]+129):
+                        print ('Collide!')
+                    # here the height of images is adjusted to avoid detecting collisions of transparend sides of the images
+                    # (9) pisels of black background on images
                         # print (aliens[al][0])
                         # print (x_coord)
                         # print ("!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -210,16 +230,24 @@ while done == False:
     spaceship.shoot()
     laser.blit()
     laser.move()
+    alien.create()
     laser.hit()
     text = font.render("You hit the alien " + str(score) + " times!", True, green) # writing scores on display
     Display.blit(text, [10, 10])
-    alien.create()
     alien.blit(aliens)
     alien.bite(aliens)
-    if eat ==True: # alien caught the ship, game over!
-        text_eaten = font.render("You lost! Alien ate your ship!", True, red)
-        Display.blit(text_eaten, [500, 350])
+    if eat == True: # alien caught the ship, game over!
+        Display.blit(lost_image,[0, 0])
+        text_eaten = font_lost.render("You lost! Alien ate your ship! Game over!", True, red)
+        Display.blit(text_eaten, [250, 350])
+        gameover = True
+        '''text_restart = font_restart.render("Press Enter to restart", True, purple)
+        Display.blit(text_restart, [250, 550])
+        if event.type == pygame.KEYDOWN:
+            eat == False
+            alien.create()'''
+
 
     pygame.display.flip()  # updates full display
-    clock.tick(30)
+    clock.tick(40)
 pygame.quit()  # ends the game when loop is over
