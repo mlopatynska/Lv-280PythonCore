@@ -107,8 +107,8 @@ class Laser(Spaceship):
         super(Laser, self).__init__()
         self.las_speed = 10
     def blit(self):
+        global fire
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            global fire
             fire = False
             self.xmuzzle = x_coord + 122 # here we override the coordinates of muzzle according to new position
             self.ymuzzle = y_coord + 61  # of the spaceship, to avoid getting old position from inherited variables
