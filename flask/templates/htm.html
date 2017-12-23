@@ -1,0 +1,120 @@
+<!DOCTYPE html> 
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+  <title>Моя первая веб-страница</title>
+<style>
+h1 { 
+    font-size: 120%; 
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    color: #333366;
+   }
+.block1 { 
+    width: 200px; 
+    background: #ccc;
+    padding: 5px;
+    padding-right: 20px; 
+    border: solid 1px black; 
+    float: left;
+   }
+.letter { 
+     color: red; /* Красный цвет символов */ 
+     font-size: 200%; /* Размер шрифта в процентах */ 
+     font-family: serif; /* Шрифт с засечками */ 
+     position: relative; /* Относительное позиционирование */ 
+     top: 5px; /* Сдвиг сверху */ 
+    }
+</style>
+ </head>
+
+ <body bgcolor="#fa8e47">
+  <h1>Заголовок <a href = "#anchor">страницы</a></h1>
+  <p><b>Основн</b>ой текст.</p>
+<img src = "http://cdn.scrapdigest.com/wp-content/uploads/2017/12/12_1024_57686950745854941513027344.9848-696x365.jpg" align="bottom" border="5" height="400", width = "1000">
+
+<div align = "left" title="Каноническая рыба" class = "block1">
+<p>Тег <a> является одним из важных элементов HTML и предназначен для создания <a href = "http://htmlbook.ru/html/a" target = "_blank" title="HTML" type = "image/jpeg" style="color: green">ссылок.</a> В зависимости от присутствия атрибутов name или href тег <a> устанавливает ссылку или якорь. Якорем называется закладка внутри страницы, которую можно указать в качестве цели ссылки. При использовании ссылки, которая указывает на <a name = "anchor">якорь</a>, происходит переход к закладке внутри веб-страницы.</p>
+</div>
+
+<p><big>Атрибут name используется</big> для определения якоря внутри страницы. <br>Вначале следует задать в соответствующем месте закладку и установить ее имя при помощи атрибута name тега <a>. <br>Имя ссылки на закладку начинается символом #, после чего идет название закладки. Название выбирается любое, <small>соответствующее тематике.</small> <br>Можно также делать <span class="letter">ссылку на закладку</span>, находящуюся в другой веб-странице <del>и даже другом сайте</del>. <ins>Для этого в адресе ссылки</ins> надлежит указать ее адрес и в конце добавить символ решетки # и имя закладки.</p>
+
+<p contenteditable="true">А вслед за этим на Тортуге наступили 
+  дни кипучей деятельности: суда оснащались в дальний поход, 
+  заготавливалось мясо и другие продукты, грузились различные 
+  запасы, необходимые для военных действий.</p>
+
+<form>
+  <p><b>Как по вашему мнению расшифровывается аббревиатура &quot;ОС&quot;?</b></p>
+  <p><input type="text" placeholder="Введите текст для поиска" maxlength = "10" size="40" >Офицерский состав<Br>
+  <input type="button" value="a2">Операционная система<Br>
+  <input type="checkbox" value="a3">Большой полосатый мух</p>
+  <p><input type="submit" value = "submitter"></p>
+<p><input type="reset" value = "eraser"></p>
+<p><input type="file"></p>
+<p><input type="email"></p>
+<p><input type="search"></p>
+<p><input type="range"></p>
+<p><input list="cocktail"></p>
+   <datalist id="cocktail">
+    <option>Аперитивы</option>
+    <option>Горячие</option>
+    <option>Десертные</option>
+    <option>Диджестивы</option>
+    <option>Молочные</option>
+    <option>Слоистые</option>
+   </datalist> 
+<p><input type="text" placeholder="Введите текст для поиска" maxlength = "10" size="10">Офицерский состав<Br>
+<p><input type="image" src="https://image.flaticon.com/icons/png/128/181/181549.png"></p>
+
+<p>Комментарий<Br>
+   <textarea cols="40" rows="3"></textarea></p>
+</form>
+
+<iframe src="https://www.fasterize.com/en/press-room/" width="900" height="300" align="left">
+    Ваш браузер не поддерживает плавающие фреймы!
+ </iframe>
+
+<table border="1" align = "right">
+   <caption>Таблица размеров обуви</caption>
+   <tr>
+    <th>Россия</th>
+    <th>Великобритания</th>
+    <th>Европа</th>
+    <th>Длина ступни, см</th>
+   </tr>
+   <tr><td>34,5</td><td>3,5</td><td>36</td><td>23</td></tr>
+   <tr><td>35,5</td><td>4</td><td>36⅔</td><td>23–23,5</td></tr>
+   <tr><td>36</td><td>4,5</td><td>37⅓</td><td>23,5</td></tr>
+   <tr><td>36,5</td><td>5</td><td>38</td><td>24</td></tr>
+   <tr><td>37</td><td>5,5</td><td>38⅔</td><td>24,5</td></tr>
+   <tr><td>38</td><td>6</td><td>39⅓</td><td>25</td></tr>
+   <tr><td>38,5</td><td>6,5</td><td>40</td><td>25,5</td></tr>
+   <tr><td>39</td><td>7</td><td>40⅔</td><td>25,5–26</td></tr>
+   <tr><td>40</td><td>7,5</td><td>41⅓</td><td>26</td></tr>
+   <tr><td>40,5</td><td>8</td><td>42</td><td>26,5</td></tr>
+   <tr><td>41</td><td>8,5</td><td>42⅔</td><td>27</td></tr>
+   <tr><td>42</td><td>9</td><td>43⅓</td><td>27,5</td></tr>
+   <tr><td>43</td><td>9,5</td><td>44</td><td>28</td></tr>
+   <tr><td>43,5</td><td>10</td><td>44⅔</td><td>28–28,5</td></tr>
+   <tr><td>44</td><td>10,5</td><td>45⅓</td><td>28,5–29</td></tr>
+   <tr><td>44,5</td><td>11</td><td>46</td><td>29</td></tr>
+   <tr><td>45</td><td>11,5</td><td>46⅔</td><td>29,5</td></tr>
+   <tr><td>46</td><td>12</td><td>47⅓</td><td>30</td></tr>
+   <tr><td>46,5</td><td>12,5</td><td>48</td><td>30,5</td></tr>
+   <tr><td>47</td><td>13</td><td>48⅔</td><td>31</td></tr>
+   <tr><td>48</td><td>13,5</td><td>49⅓</td><td>31,5</td></tr>
+  </table>
+
+<a href = "http://www.anews.com/p/81878905-zagadochnye-snimki-kotorym-ne-udaetsya-najti-obyasnenie/?utm_source=facebook&utm_medium=social&utm_campaign=mind_outburst"><img border="0" src = http://img.anews.com/media/gallery/81878905/778640409.jpg width = "1000"></a>
+
+<dl>
+  <dt>Термин 1</dt>
+   <dd>Определение термина 1</dd>
+  <dt>Термин 2</dt>
+   <dd>Определение термина 2</dd>
+</dl>
+
+
+
+ </body>
+</html>
