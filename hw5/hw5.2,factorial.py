@@ -8,6 +8,13 @@ def facto(n):
 print (facto(0))
 
 
+#variant 2, recursion, correct
+def facto(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * facto(n-1)
+print (facto(10))
 
 
 m = input('please enter any 2 positive numbers:\n')
