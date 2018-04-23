@@ -1,4 +1,15 @@
-#variant 1, iteration
+#variant 1, iteration, correct
+
+def facto(n):
+    factor = 1
+    for i in range(1,n+1):
+        factor *=i
+    return factor
+print (facto(0))
+
+
+
+
 m = input('please enter any 2 positive numbers:\n')
 n = input()
 def facto_multi(m, n):  # this is the functio which defines final result F(nm)
